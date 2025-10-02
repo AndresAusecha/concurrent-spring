@@ -34,6 +34,8 @@ public class WeatherForecastService {
     }
 
     public List<OpenMeteoResponse> forecastForAddress(ForecastBody forecastBody) {
+        //use ExecutorService to create parallel requests to the APIs using virtual threads
+        //all the requests are triggered at the same time
         List<CompletableFuture<MapboxGeocodeSearchResponse>> geocodeFutures;
         try {
             geocodeFutures = forecastBody.addresses.stream().map((address) ->
@@ -54,8 +56,10 @@ public class WeatherForecastService {
             return new ArrayList<>();
         }
 
+        // wait for all the futures to complete the invocation
         CompletableFuture.allOf(geocodeFutures.toArray(CompletableFuture[]::new)).join();
 
+        //same pattern here with the second bundle of requests
         var locationForecastFutures = geocodeFutures.stream().map((future) -> {
             MapboxGeocodeSearchResponse result = future.join();
             var geometry = result.getFeatures().getFirst().getGeometry().getCoordinates();
