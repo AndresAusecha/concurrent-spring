@@ -13,11 +13,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/weather")
-public class WeatherForecastController {
+public class WeatherController {
     private final WeatherForecastService service;
-    public WeatherForecastController(WeatherForecastService service) {
+
+    public WeatherController(WeatherForecastService service) {
         this.service = service;
     }
+
     @PostMapping("/forecast")
     ResponseEntity<List<OpenMeteoResponse>> forecastForAddress(
             @RequestBody ForecastBody forecastBody
