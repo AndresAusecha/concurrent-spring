@@ -2,27 +2,16 @@ package co.aamsis.concurrent.spring.dtos;
 
 import java.util.List;
 
-public class MapboxGeocodeSearchResponse {
-    List<MapBoxFeature> features;
-
-    public class MapBoxGeometry {
-        List<Double> coordinates;
-
-        public List<Double> getCoordinates() {
-            return coordinates;
+public record MapboxGeocodeSearchResponse(
+        List<MapBoxFeature> features
+) {
+    public record MapBoxFeature(
+            MapBoxGeometry geometry
+    ) {
+        public record MapBoxGeometry(
+                List<Double> coordinates
+        ) {
         }
-    }
-
-    public class MapBoxFeature {
-        MapBoxGeometry geometry;
-
-        public MapBoxGeometry getGeometry() {
-            return geometry;
-        }
-    }
-
-    public List<MapBoxFeature> getFeatures() {
-        return features;
     }
 }
 
