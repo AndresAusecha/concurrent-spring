@@ -38,13 +38,13 @@ public class WeatherForecastService {
         //all the requests are triggered at the same time
         List<CompletableFuture<MapboxGeocodeSearchResponse>> geocodeFutures;
         try {
-            geocodeFutures = forecastBody.addresses.stream().map((address) ->
+            geocodeFutures = forecastBody.addresses().stream().map((address) ->
                     CompletableFuture
                             .supplyAsync(
                                     () -> this
                                             .mapboxClient
                                             .getGeocodeForLocation(
-                                                    this.sanitizeAddress(address.getAddress()) + address.getPostalCode()),
+                                                    this.sanitizeAddress(address.address()) + address.postalCode()),
                                     executorService
                             ).exceptionally(ex -> {
                                 System.out.println("Something failed");
@@ -62,7 +62,7 @@ public class WeatherForecastService {
         //same pattern here with the second bundle of requests
         var locationForecastFutures = geocodeFutures.stream().map((future) -> {
             MapboxGeocodeSearchResponse result = future.join();
-            var geometry = result.getFeatures().getFirst().getGeometry().getCoordinates();
+            var geometry = result.features().getFirst().geometry().coordinates();
 
             return CompletableFuture.supplyAsync(
                     () -> openMeteoClient.fetchForecastForLocation(geometry.getLast(), geometry.getFirst()),
@@ -71,7 +71,7 @@ public class WeatherForecastService {
                 System.out.println("Something failed");
                 System.out.print(ex.getMessage());
 
-                return new OpenMeteoResponse();
+                return new OpenMeteoResponse(-1, -1, 0, 0, "", "", 0);
             });
         }).toList();
 
