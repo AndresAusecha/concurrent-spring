@@ -1,11 +1,6 @@
 package co.aamsis.concurrent.spring.clients;
 
 import co.aamsis.concurrent.spring.dtos.OpenMeteoResponse;
-import com.google.gson.Gson;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -35,7 +30,7 @@ public class OpenMeteoClient {
             return restTemplate.getForObject(url, OpenMeteoResponse.class);
         } catch (Exception e) {
             System.out.println("Error fetching forecast: " + e.getMessage());
-            return new OpenMeteoResponse();
+            return new OpenMeteoResponse(-1, -1, 0, 0, "", "", 0);
         }
     }
 }
